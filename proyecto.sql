@@ -40,23 +40,31 @@ CREATE TABLE multa(
 	id_prestamo CHAR(4) NOT NULL,
 	monto NUMBER(10,0) NOT NULL,
 	--lect_multa NOT NULL,creo que aqui es id lect
+	--id_lector CHAR(4),
 	dias_retraso NOT NULL,
 	fecha_multa DATE,
 	--aqui iria su constraint
+	--CONSTRAINT fk_id_lector_multa FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE
 );
 
 CREATE TABLE tipoLect(
 	id_tipoLect CHAR(4) PRIMARY KEY,
 	id_lector CHAR(4) NOT NULL,
 	--tengo dudas en los siguientes atributos de esta tabla
-);
+	
+	--profesor VARCHAR2(4) NULL,
+	--alumno VARCHAR2(4) NULL,
+	--investigador VARCHAR2(4) NULL,
+	--CONSTRAINT fk_id_lector_tipoLect FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE
 
 CREATE TABLE ejemplar(
 	no_ejemplar NUMBER(4), 
 	id_material NUUMBER(4) NOT NULL,
 	status VARCHAR2(20) NOT NULL,
 	CONSTRAINT PkEjemplar PRIMARY KEY no_ejemplar,
+	--CONSTRAINT PkEjemplar PRIMARY KEY (no_ejemplar,id_material),
 	CONSTRAINT FkEjemplar FOREIGN KEY id_material REFERENCES material,
+	--CONSTRAINT FkEjemplar FOREIGN KEY (id_material) REFERENCES material (id_material) ON DELETE CASCADE,
 	CONSTRAINT Estado CHECK status IN ('Disponible','Prestamo','No sale','Mantenimiento'));
 	--Tengo dudas de la sintaxis de los constraints ↑
 	
@@ -76,6 +84,9 @@ CREATE TABLE tesis(
 	id_material NUMBER(4),
 	carrera VARCHAR2(30) NOT NULL,
 	anio_pub VARCHAR2(30) NOT NULL,
+	--ubicacion VARCHAR2(20) NOT NULL,
+	--id_autor CHAR(4),
+	--id_director CHAR(4),
 	CONSTRAINT FkTesis FOREIGN KEY id_material REFERENCES material,
 	CONSTRAINT PkTesis PRIMARY KEY id_tesis
 	
