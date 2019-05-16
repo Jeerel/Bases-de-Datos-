@@ -8,6 +8,7 @@ Base de datos de libreria
 Integrantes:
 Herrejon Alarcon Jeerel Zalatiel
 Hernández Guevara Daniel Alberto
+Quiróz Mendiola Metztli Iréti
 */
 
 CREATE TABLE autor
