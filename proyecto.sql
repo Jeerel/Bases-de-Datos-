@@ -6,119 +6,143 @@ Proyecto de Base de Datos
 Base de datos de libreria 
 
 Integrantes:
-Herrejon Alarcon Jeerel Zalatiel
+Herrejón Alarcón Jeerel Zalatiel
 Hernández Guevara Daniel Alberto
 Quiróz Mendiola Metztli Iréti
 */
 
+--CREACION DE TABLAS
+
 CREATE TABLE autor
 (
 	id_autor CHAR(4) PRIMARY KEY,
-	nomb_aut VARCHAR2(30) NOT NULL,
+	nombre_autor VARCHAR2(30) NOT NULL,
 	nacionalidad VARCHAR2(30) NOT NULL 
+);
+	
+CREATE TABLE material(
+	id_material CHAR(4) PRIMARY KEY
 );
 
 CREATE TABLE lector(
 	id_lector CHAR(4) PRIMARY KEY,
-	nomb_lector VARCHAR2(30) NOT NULL,
+	nombre_lector VARCHAR2(30) NOT NULL,
 	domicilio VARCHAR2(30) NOT NULL,
 	telefono NUMBER(10,0) NOT NULL,
 	fecha_alta DATE,
 	fecha_vigencia DATE
-	--adeudo no se como ponerlo tal vez con un check
 );
 
-CREATE TABLE prestamo(
-	id_prestamo CHAR(4) PRIMARY KEY,
+CREATE TABLE tipo_lector(
+	id_tipo CHAR(4) PRIMARY KEY,
 	id_lector CHAR(4) NOT NULL,
-	fecha_real DATE,
-	fecha_dev DATE,
-	--id_tipoLect el mismo caso de adeudo para este
+	descripcion VARCHAR2(30) NOT NULL,
+	profesor VARCHAR2(4) NULL,
+	alumno VARCHAR2(4) NULL,
+	investigador VARCHAR2(4) NULL,
+	CONSTRAINT fkId_lector_tipo FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE
 );
 
 CREATE TABLE multa(
-	id_multa CHAR(4) PRIMARY KEY,
-	id_prestamo CHAR(4) NOT NULL,
+	id_multa CHAR(4) NOT NULL,
+	id_lector CHAR(4),
+	fecha_multa DATE NOT NULL,
+	dias_atraso NUMBER(5,0) NOT NULL,
 	monto NUMBER(10,0) NOT NULL,
-	--lect_multa NOT NULL,creo que aqui es id lect
-	--id_lector CHAR(4),
-	dias_retraso NOT NULL,
-	fecha_multa DATE,
-	--aqui iria su constraint
-	--CONSTRAINT fk_id_lector_multa FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE
+	CONSTRAINT fkId_lector_multa FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE
 );
-
-CREATE TABLE tipoLect(
-	id_tipoLect CHAR(4) PRIMARY KEY,
-	id_lector CHAR(4) NOT NULL,
-	--tengo dudas en los siguientes atributos de esta tabla
-	
-	--profesor VARCHAR2(4) NULL,
-	--alumno VARCHAR2(4) NULL,
-	--investigador VARCHAR2(4) NULL,
-	--CONSTRAINT fk_id_lector_tipoLect FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE
 
 CREATE TABLE ejemplar(
-	no_ejemplar NUMBER(4), 
-	id_material NUUMBER(4) NOT NULL,
+	id_material CHAR(4),
+	no_ejemplar CHAR(4) UNIQUE,
 	status VARCHAR2(20) NOT NULL,
-	CONSTRAINT PkEjemplar PRIMARY KEY no_ejemplar,
-	--CONSTRAINT PkEjemplar PRIMARY KEY (no_ejemplar,id_material),
-	CONSTRAINT FkEjemplar FOREIGN KEY id_material REFERENCES material,
-	--CONSTRAINT FkEjemplar FOREIGN KEY (id_material) REFERENCES material (id_material) ON DELETE CASCADE,
-	CONSTRAINT Estado CHECK status IN ('Disponible','Prestamo','No sale','Mantenimiento'));
-	--Tengo dudas de la sintaxis de los constraints ↑
-	
-
-CREATE TABLE material(
-	id_material NUMBER(4),
-	titulo VARCHAR2(30) NOT NULL,
-	ubicacion VARCHAR2(30) NOT NULL,
-	colocacion VARCHAR2(30) NOT NULL,
-	CONSTRAINT PkMaterial PRIMARY KEY id_material
-	
-	
+	CONSTRAINT fkId_material_ejemplar FOREIGN KEY(id_material) REFERENCES material(id_material) ON DELETE CASCADE,
+	CONSTRAINT pkEjemplar PRIMARY KEY(id_material,no_ejemplar)
 );
 
-CREATE TABLE tesis(
-	id_tesis NUMBER(4),
-	id_material NUMBER(4),
-	carrera VARCHAR2(30) NOT NULL,
-	anio_pub VARCHAR2(30) NOT NULL,
-	--ubicacion VARCHAR2(20) NOT NULL,
-	--id_autor CHAR(4),
-	--id_director CHAR(4),
-	CONSTRAINT FkTesis FOREIGN KEY id_material REFERENCES material,
-	CONSTRAINT PkTesis PRIMARY KEY id_tesis
-	
+CREATE TABLE director(
+	id_director CHAR(4) PRIMARY KEY,
+	nombre_director VARCHAR2(30) NOT NULL,
+	gdo_acad VARCHAR2(20) NOT NULL	
+);
+
+CREATE TABLE tipoMaterial(
+	id_material CHAR(4),
+	tipoMaterial VARCHAR2(20) NOT NULL,
+	CONSTRAINT fkId_material_tipoMaterial FOREIGN KEY(id_material) REFERENCES material(id_material) ON DELETE CASCADE,
+	CONSTRAINT pkTipoMaterial PRIMARY KEY(id_material)
 );
 
 CREATE TABLE libro(
-	no_adqui NUMBER(4),
-	id_Material NUMBER(4),
-	ISBN NUMBER(13) NOT NULL,
-	edicion NUMBER(2) NOT NULL,
+	id_material CHAR(4),
+	isbn VARCHAR2(20) UNIQUE,
+	edicion VARCHAR2(10) NOT NULL,
 	tema VARCHAR2(30) NOT NULL,
-	CONSTRAINT FkLibro FOREIGN KEY id_material REFERENCES material,
-	CONSTRAINT PkLibro PRIMARY KEY no_adqui
-
-	
+	no_adqui NUMBER(3,0) NOT NULL,
+	id_autor CHAR(4),
+	titulo VARCHAR2(30) NOT NULL,
+	ubicacion VARCHAR2(30) NOT NULL,
+	colocacion VARCHAR2(30) NOT NULL,
+	CONSTRAINT fkId_autor_libro FOREIGN KEY(id_autor) REFERENCES autor(id_autor) ON DELETE CASCADE,
+	CONSTRAINT fkId_material_libro FOREIGN KEY(id_material) REFERENCES material(id_material) ON DELETE CASCADE,
+	CONSTRAINT pk_numId_libro PRIMARY KEY(id_material)
 );
 
-CREATE TABLE director (
-	id_director NUMBER(4),
-	id_tesis NUMBER(4),
-	id_material NUMBER(4),
-	nomb_direct VARCHAR2(50) NOT NULL,
-	gdo_acad VARCHAR2(30) NOT NULL,
-	CONSTRAINT FkTesis FOREIGN KEY id_tesis REFERENCES tesis,
-	CONSTRAINT FkMaterial FOREIGN KEY id_material REFERENCES material,
-	CONSTRAINT PkDirector PRIMARY KEY (id_director, id_tesis, id_material)
-	
-	
+CREATE TABLE tesis(
+	id_material CHAR(4),
+	id_tesis CHAR(4) UNIQUE,
+	carrera VARCHAR2(20) NOT NULL,
+	anio_pub NUMBER(4,0) NOT NULL,
+	ubicacion VARCHAR2(20) NOT NULL,
+	colocacion VARCHAR2(30) NOT NULL,
+	titulo VARCHAR2(30) NOT NULL,
+	id_autor CHAR(4),
+	id_director CHAR(4),
+	CONSTRAINT fkId_autor_tesis FOREIGN KEY(id_autor) REFERENCES autor(id_autor) ON DELETE CASCADE,
+	CONSTRAINT fkId_director_tesis FOREIGN KEY(id_director) REFERENCES director(id_director) ON DELETE CASCADE,
+	CONSTRAINT fkId_material_tesis FOREIGN KEY(id_material) REFERENCES material(id_material) ON DELETE CASCADE,
+	CONSTRAINT pkTesis PRIMARY KEY(id_material)
 );
 
+--LLENADO DE TABLAS
 
+--Tabla material
 
+INSERT INTO material VALUES('M001');
+INSERT INTO material VALUES('M002');
+INSERT INTO material VALUES('M003');
+INSERT INTO material VALUES('M004');
+INSERT INTO material VALUES('M005');
+INSERT INTO material VALUES('M006');
+INSERT INTO material VALUES('M007');
+INSERT INTO material VALUES('M008');
+INSERT INTO material VALUES('M009');
+INSERT INTO material VALUES('M010');
 
+--Tabla ejemplar
 
+INSERT INTO ejemplar VALUES('M001','E001','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M002','E002','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M003','E003','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M004','E004','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M005','E005','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M006','E006','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M007','E007','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M008','E008','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M009','E009','DISPONIBLE');
+INSERT INTO ejemplar VALUES('M010','E010','DISPONIBLE');
+
+--Tabla lector
+
+INSERT INTO lector VALUES('L001','Jeerel Herrejo','Iztaccihualt 108',5579001766,'07/10/19','07/10/20');
+INSERT INTO lector VALUES('L002','Eduardo Uribe','Ecatepec 96',5517288391,'09/05/19','09/05/20');
+INSERT INTO lector VALUES('L003','Jumma Hernandez','Real del valle 28',5518290192,'07/07/19','07/07/20');
+INSERT INTO lector VALUES('L004','karen Cruz','Aztecas 11','LGomez 43',57852712,'28/08/19','28/08/20');
+INSERT INTO lector VALUES('L005','Mendiola Metztli','Viaducto 84',5500981723,'12/05/19','12/05/20');
+INSERT INTO lector VALUES('L006','Libna Thais','Brasil 33',1342642878,'16/07/19','16/07/20');
+INSERT INTO lector VALUES('L007','Mario Morales','California 4',5561788923,'5/11/19','5/11/20');
+INSERT INTO lector VALUES('L008','Daniel Hernandez','Bordo 1',2287771200,'23/09/19','23/09/20');
+INSERT INTO lector VALUES('L009','Rodrigo Franca','Argentina 55',66152678,'16/04/19','16/04/20');
+INSERT INTO lector VALUES('L010','Elizabeth Chavez','Chimalhuacan 90',1340911234,'16/05/19','16/05/20');
+
+--LLENEN LAS TABLAS DE ACUERDO A COMO ESTAN ACOMODADOS LOS VALORES POR FA! HEHE SALU2
