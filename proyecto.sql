@@ -146,3 +146,31 @@ INSERT INTO lector VALUES('L009','Rodrigo Franca','Argentina 55',66152678,'16/04
 INSERT INTO lector VALUES('L010','Elizabeth Chavez','Chimalhuacan 90',1340911234,'16/05/19','16/05/20');
 
 --LLENEN LAS TABLAS DE ACUERDO A COMO ESTAN ACOMODADOS LOS VALORES POR FA! HEHE SALU2
+
+--Tabla tipo material
+INSERT INTO tipoMaterial VALUES('M001','libro');
+INSERT INTO tipoMaterial VALUES('M002','libro');
+INSERT INTO tipoMaterial VALUES('M003','libro');
+INSERT INTO tipoMaterial VALUES('M004','libro');
+INSERT INTO tipoMaterial VALUES('M005','libro');
+INSERT INTO tipoMaterial VALUES('M006','tesis');
+INSERT INTO tipoMaterial VALUES('M007','tesis');
+INSERT INTO tipoMaterial VALUES('M008','tesis');
+INSERT INTO tipoMaterial VALUES('M009','tesis');
+INSERT INTO tipoMaterial VALUES('M010','tesis');
+
+--Tabla libro
+--Falta num_adqui
+INSERT INTO libro VALUES('M001','978843501','2a','Narrativa','?','A001','Todos los fuegos el fuego','AB12','Av. Churubusco 13');
+INSERT INTO libro VALUES('M002','978607527','3a','Autoayuda','?','A002','Arte de la seduccion','AC12','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M003','978987580','5a','Narrativa','?','A003','Metamorfosis','AD13','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M004','978607445','4a','Autores Mexicanos','?','A004','Dias que no se noimbran','AE14','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M005','978607314','1a','Narrativa','?','A005','Travesuras de la niña mala','AF15','Av. Churubusco 13'); 
+
+
+--Tabla Autor
+INSERT INTO autor VALUES('A001','Julio Cortazar','Argentina');
+INSERT INTO autor VALUES('A002','Robert Greene','Estadounidense');
+INSERT INTO autor VALUES('A003','Franz Kafka','Austrohungara');
+INSERT INTO autor VALUES('A004','Jose Emilio Pacheco','Mexicana');
+INSERT INTO autor VALUES('A005','Mario Vargas Llosa','Peruana');
