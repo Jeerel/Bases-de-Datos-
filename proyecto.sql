@@ -161,12 +161,18 @@ INSERT INTO tipoMaterial VALUES('M010','tesis');
 
 --Tabla libro
 --Falta num_adqui
-INSERT INTO libro VALUES('M001','978843501','2a','Narrativa','?','A001','Todos los fuegos el fuego','AB12','Av. Churubusco 13');
-INSERT INTO libro VALUES('M002','978607527','3a','Autoayuda','?','A002','Arte de la seduccion','AC12','Av. Churubusco 13'); 
-INSERT INTO libro VALUES('M003','978987580','5a','Narrativa','?','A003','Metamorfosis','AD13','Av. Churubusco 13'); 
-INSERT INTO libro VALUES('M004','978607445','4a','Autores Mexicanos','?','A004','Dias que no se noimbran','AE14','Av. Churubusco 13'); 
-INSERT INTO libro VALUES('M005','978607314','1a','Narrativa','?','A005','Travesuras de la niña mala','AF15','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M001','978843501','2a','Narrativa','010','A001','Todos los fuegos el fuego','AB12','Av. Churubusco 13');
+INSERT INTO libro VALUES('M002','978607527','3a','Autoayuda','011','A002','Arte de la seduccion','AC12','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M003','978987580','5a','Narrativa','012','A003','Metamorfosis','AD13','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M004','978607445','4a','Autores Mexicanos','013','A004','Dias que no se noimbran','AE14','Av. Churubusco 13'); 
+INSERT INTO libro VALUES('M005','978607314','1a','Narrativa','014','A005','Travesuras de la niña mala','AF15','Av. Churubusco 13'); 
 
+--valores tabla tesis
+INSERT INTO tesis VALUES('M006','T001','Medicina','2019','TA12','Av. Churubusco 13','Factores desencadenantes de crisis hipertensiva','A006','D001');
+INSERT INTO tesis VALUES('M007','T002','Ingenieria en sistemas','2014','TB12','Av. Churubusco 13','Los sistemas ERP','A007','D002');
+INSERT INTO tesis VALUES('M008','T003','Psicologia','2012','TC13','Av. Churubusco 13','Taller de liderazgo para atletas de alto rendimiento','A008','D003');
+INSERT INTO tesis VALUES('M009','T004','Derecho','2019','TD13','Av. Churubusco 13','Asociaciones publico privadas','A009','D004');
+INSERT INTO tesis VALUES('M010','T005','Fisica','2012','TE14','Av. Churubusco 13','Dosimetría ambiental en aula-laboratorio de radiología odontológica','A010','D005');
 
 --Tabla Autor
 INSERT INTO autor VALUES('A001','Julio Cortazar','Argentina');
@@ -174,3 +180,16 @@ INSERT INTO autor VALUES('A002','Robert Greene','Estadounidense');
 INSERT INTO autor VALUES('A003','Franz Kafka','Austrohungara');
 INSERT INTO autor VALUES('A004','Jose Emilio Pacheco','Mexicana');
 INSERT INTO autor VALUES('A005','Mario Vargas Llosa','Peruana');
+INSERT INTO autor VALUES('A006','Abel García Jarquín','Mexicana');
+INSERT INTO autor VALUES('A007','Abel Reyes Ortiz','Mexicana');
+INSERT INTO autor VALUES('A008','Daniel Aguirre Espinosa','Mexicana');
+INSERT INTO autor VALUES('A009','Luis Acosta Perez','Mexicana');
+INSERT INTO autor VALUES('A010','Felipe Alvarez Siordia','Mexicana');
+
+--valores tabla director
+INSERT INTO director VALUES('D001','Alberto Ruiz ','Doctor'); 
+INSERT INTO director VALUES('D002','Arturo Fuentes','Doctor');
+INSERT INTO director VALUES('D003','Aida Mendoza','Doctor');
+INSERT INTO director VALUES('D004','Arturo Oropeza','Doctor');
+INSERT INTO director VALUES('D005','Patricia Aviles','Doctor');
+
