@@ -53,3 +53,58 @@ END;
 /
 
 
+--vista para libros disponibles
+CREATE OR REPLACE VIEW VwLibrosDisponibles
+AS
+SELECT tema, edicion, colocacion, ubicacion, nombre_autor
+FROM libro JOIN autor USING(id_autor)
+WHERE id_material IN (
+SELECT id_material FROM ejemplar
+WHERE estatus = 'DISPONIBLE'
+);
+
+--SET PAGESIZE 80 SET LINE 132
+--Ver los valores agregados a la vista.
+SELECT * FROM VwLibrosDisponibles;
+
+
+--vista para tesis disponibles
+CREATE OR REPLACE VIEW VwTesisDisponibles
+AS
+SELECT titulo, carrera, colocacion, ubicacion,anio_pub, nombre_autor
+FROM tesis JOIN autor USING(id_autor)
+WHERE id_material IN (
+SELECT id_material FROM ejemplar
+WHERE estatus = 'DISPONIBLE'
+);
+
+--SET PAGESIZE 80 SET LINE 132
+--Ver los valores agregados a la vista.
+SELECT * FROM VwTesisDisponibles;
+
+--Vista de tesis y sus aurtores
+CREATE OR REPLACE VIEW vWAutoresTesis
+AS
+SELECT nombre_autor, titulo, anio_pub
+FROM autor JOIN tesis USING (id_autor);
+
+
+--Vista de librosy sus autores
+CREATE OR REPLACE VIEW vWAutoresLibros
+AS
+SELECT nombre_autor, tema, ISBN
+FROM autor JOIN libro USING (id_autor);
+
+--Disparador de resello
+CREATE OR REPLACE TRIGGER resello
+AFTER INSERT
+ON prestamo
+FOR EACH ROW
+BEGIN
+UPDATE prestamo SET fecha_real:= SYSDATE;
+EXEC funcion_fecha_dev;
+UPDATE prestamo SET refrendos=refrendos+1;
+END;
+/
+
+
