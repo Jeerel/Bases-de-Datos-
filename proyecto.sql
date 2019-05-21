@@ -109,7 +109,7 @@ CREATE TABLE prestamo(
 	no_ejemplar CHAR(4),
 	fecha_real DATE,
 	fecha_dev DATE,
-	referendos NUMBER(2) NOT NULL,
+	refrendos NUMBER(2) NOT NULL,
 	id_lector CHAR(4),
 	CONSTRAINT fkId_lector_prestamo FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE,
 	CONSTRAINT fkno_ejemplar_prestamo FOREIGN KEY(no_ejemplar) REFERENCES ejemplar(no_ejemplar) ON DELETE CASCADE
@@ -204,3 +204,227 @@ INSERT INTO director VALUES('D003','Aida Mendoza','Doctor');
 INSERT INTO director VALUES('D004','Arturo Oropeza','Doctor');
 INSERT INTO director VALUES('D005','Patricia Aviles','Doctor');
 
+--Creacion de secuencias 
+
+CREATE SEQUENCE tipo_lector_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+CREATE SEQUENCE multa_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+CREATE SEQUENCE tesis_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+CREATE SEQUENCE autor_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+CREATE SEQUENCE ejemplar_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+CREATE SEQUENCE director_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+CREATE SEQUENCE prestamo_secuencia START WITH 1 INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 1000;
+
+--FUNCIONES
+
+--Funcion de multa
+
+REATE OR REPLACE FUNCTION funcion_multa(vId_lector IN CHAR)
+RETURN NUMBER
+IS
+	vtotal_multa NUMBER(3);
+	vretraso NUMBER(3);
+	vfecha_devol DATE;
+BEGIN
+	SELECT fecha_dev INTO vfecha_devol
+	FROM prestamo WHERE id_lector = vId_lector;
+	vretraso:=(TO_DATE(SYSDATE,'dd/MM/yyyy') - TO_DATE(vfecha_devol,'dd/MM/yyy'));
+	IF vretraso=0 THEN
+		RETURN 0;
+	ELSE
+		vtotal_multa:= 10 * vretraso;		--10 pesos por dia
+		INSERT INTO multa
+		VALUES('M'||multa_secuencia.NEXTVAL,SYSDATE,vretraso,vtotal_multa,vId_lector);
+		RETURN vtotal_multa;
+	END IF;
+END;
+/
+
+--Funcion de fecha de devolucion
+
+CREATE OR REPLACE FUNCTION funcion_fecha_dev(
+vProfesor IN CHAR,
+vAlumno IN CHAR,
+vInvestigador IN CHAR)
+RETURN DATE
+IS
+	vfecha_devol DATE;
+BEGIN
+	IF vProfesor = 'SI' THEN
+		vfecha_devol := SYSDATE + 15;
+	ELSIF vAlumno = 'SI' THEN
+		vfecha_devol := SYSDATE + 8;
+	ELSIF vInvestigador = 'SI' THEN
+		vfecha_devol := SYSDATE + 30;
+	END IF;
+	RETURN vfecha_devol;
+END;
+/
+
+--PROCEDIMIENTOS
+
+--Procedimiento para dar de alta a lector
+
+CREATE OR REPLACE PROCEDURE alta_usuario(
+vId_lector lector.id_lector%TYPE,
+vNombreLector lector.nombre_lector%TYPE,
+vTelefono lector.telefono%TYPE,
+vDireccion lector.direccion%TYPE,
+vProfesor tipo_lector.profesor%TYPE,
+vAlumno tipo_lector.alumno%TYPE,
+vInvestigador tipo_lector.investigador%TYPE,
+vDescripcion tipo_lector.descripcion%TYPE
+)
+AS
+	vFechaActual DATE;
+	vFechaVigencia DATE;
+BEGIN
+	vFechaActual := SYSDATE;
+	vFechaVigencia := add_months(vFechaActual,12);
+	INSERT INTO lector VALUES(vId_lector, vNombreLector, vTelefono, vDireccion, vFechaActual, vFechaVigencia);
+	INSERT INTO tipo_lector
+VALUES('T'||tipo_lector_secuencia.NEXTVAL,vDescrip,vProfesor,vAlumno,vInvestigador,vId_lector);
+	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('El lector: ' || vNombreLector || ' se ha agregado');
+END alta_usuario;
+/
+
+--Procedimiento para dar de baja a lector
+
+CREATE OR REPLACE PROCEDURE baja_lector(vLector lector.id_lector%TYPE)
+AS
+	vNombreLector lector.nombre_lector%TYPE;
+BEGIN
+	SELECT nombreLec INTO vNombreLector 
+	FROM lector WHERE id_lector=vLector;
+	DELETE lector WHERE id_lector = vLector;
+	DBMS_OUTPUT.PUT_LINE('El lector: ' || vNombreLector||' se ha dado de baja');
+END baja_lector;
+/
+
+--Procedimiento para agregar un LIBRO
+
+CREATE OR REPLACE PROCEDURE agrega_libro(
+vId_material material.id_material%TYPE,
+visbn libro.isbn%TYPE,
+vedicion libro.edicion%TYPE,
+vtema libro.tema%TYPE,
+vcolocacion libro.colocacion%TYPE,
+vubicacion libro.ubicacion%TYPE,
+vautor autor.nombre_autor%TYPE,
+vnacionalidad autor.nacionalidad%TYPE)
+AS
+	vid_autor CHAR(4);
+BEGIN
+	vid_autor := 'A'||autor_secuencia.NEXTVAL;
+	INSERT INTO libro VALUES(vId_material,visbn,vedicion,vtema,vcolocacion,vubicacion,vid_autor);
+	INSERT INTO tipoMaterial VALUES(vId_material,'libro');
+	INSERT INTO material VALUES(vId_material);
+	INSERT INTO ejemplar VALUES(vId_material,'E'||ejemplar_secuencia.NEXTVAL,'DISPONIBLE');
+	INSERT INTO autor VALUES(vid_autor,vautor,vnacionalidad);
+	COMMIT;
+END;
+/
+
+--Procedimiento para agregar una TESIS
+
+CREATE OR REPLACE PROCEDURE agregaTesis(
+vId_material material.id_material%TYPE,
+vtema tesis.tema%TYPE,
+vanio tesis.anio_pub%TYPE,
+vubicacion tesis.ubicacion%TYPE,
+vautor autor.nombre_autor%TYPE,
+vnacionalidad autor.nacionalidad%TYPE,
+vnombre_director director.nombre_director%TYPE,
+vgrado director.gdo_acad%TYPE)
+AS
+	vid_autor CHAR(4);
+	vid_director CHAR(4);
+BEGIN
+	vid_autor := 'A'||autor_secuencia.NEXTVAL;
+	vid_director:= 'D'||director_secuencia.NEXTVAL;
+	INSERT INTO tesis
+VALUES(vId_material,'T'||tesis_secuencia.NEXTVAL,vtema,vanio,vubicacion,vid_autor,'D'||vid_director);
+	INSERT INTO tipoMaterial VALUES(vId_material,'tesis');
+	INSERT INTO material VALUES(vId_material);
+	INSERT INTO ejemplar VALUES(vId_material,'E'||ejemplar_secuencia.NEXTVAL,'DISPONIBLE');
+	INSERT INTO director VALUES(vid_director,vnombre_director,vgrado);
+	COMMIT;
+END;
+/
+
+--Procedimiento para prestamo
+
+CREATE OR REPLACE PROCEDURE prestamo(
+vId_lector lector.id_lector%TYPE,
+vno_ejem ejemplar.no_ejemplar%TYPE
+)
+AS
+vmulta NUMBER(3);
+vprof tipoLector.profesor%TYPE;
+vAlumno tipoLector.alumno%TYPE;
+vInvestigador tipoLector.investigador%TYPE;
+vfecha_devol DATE;
+BEGIN
+SELECT profesor, alumno, investigador INTO vProfesor,vAlumno,vInvestigador
+FROM tipo_lector WHERE id_lector=vId_lector;
+vmulta:=funcion_multa(vId_lector);
+IF(vmulta>0) THEN
+DBMS_OUTPUT.PUT_LINE('El lector tiene multas, imposible hacer este procedimiento');
+ELSE
+vfecha_devol := funcion_fecha_dev(vProfesor,vAlumno,vInvestigador);
+INSERT INTO prestamo
+VALUES('P'||prestamoSec.NEXTVAL,vno_ejem,SYSDATE,vfecha_devol,'0',vId_lector);
+END IF;
+END;
+/
+
+--procedimiento para el resello
+
+CREATE OR REPLACE PROCEDURE refrendos(
+vid_lector lector.id_lector%TYPE)
+AS
+vrefrendos NUMBER(2);
+BEGIN
+SELECT refrendos INTO vrefrendos
+FROM prestamo WHERE id_lector=vId_lector;
+vrefrendos := vrefrendos - 1;
+IF vrefrendos < 0 THEN
+DBMS_OUTPUT.PUT_LINE('Refrendos agotados');
+ELSE
+UPDATE prestamo SET refrendos = vrefrendos WHERE id_lector = vid_lector;
+UPDATE prestamo SET fecha_dev = SYSDATE WHERE id_lector = vId_lector;
+END IF;
+END;
+/
+
+--procedimiento para la devolucion
+
+CREATE OR REPLACE PROCEDURE devolucion(
+vid_lector lector.id_lector%TYPE,
+vno_ejem prestamo.no_ejemplar%TYPE)
+AS
+BEGIN
+DELETE prestamo WHERE id_lector = vId_lector
+AND no_ejemplar = vno_ejem;
+END;
+/
