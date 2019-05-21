@@ -107,4 +107,15 @@ UPDATE prestamo SET refrendos=refrendos+1;
 END;
 /
 
+--procedimiento para la devolucion
+CREATE OR REPLACE PROCEDURE devolucion(
+vidLect lector.id_lector%TYPE,
+vnumEjem prestamo.no_ejemplar%TYPE)
+AS
+BEGIN
+DELETE prestamo WHERE id_lector = vidLect
+AND no_ejemplar = vnumEjem;
+END;
+/
+
 
