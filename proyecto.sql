@@ -104,6 +104,17 @@ CREATE TABLE tesis(
 	CONSTRAINT pkTesis PRIMARY KEY(id_material)
 );
 
+CREATE TABLE prestamo(
+	id_prestamo CHAR(4) PRIMARY KEY,
+	no_ejemplar CHAR(4),
+	fecha_real DATE,
+	fecha_dev DATE,
+	referendos NUMBER(2) NOT NULL,
+	id_lector CHAR(4),
+	CONSTRAINT fkId_lector_prestamo FOREIGN KEY(id_lector) REFERENCES lector(id_lector) ON DELETE CASCADE,
+	CONSTRAINT fkno_ejemplar_prestamo FOREIGN KEY(no_ejemplar) REFERENCES ejemplar(no_ejemplar) ON DELETE CASCADE
+);
+
 --LLENADO DE TABLAS
 
 --Tabla material

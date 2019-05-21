@@ -3967,7 +3967,7 @@
         <dia:string>#1,1#</dia:string>
       </dia:attribute>
       <dia:attribute name="identifying">
-        <dia:boolean val="true"/>
+        <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="rotated">
         <dia:boolean val="false"/>
